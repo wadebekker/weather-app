@@ -11,47 +11,120 @@
         <link rel="stylesheet" href="css/main.css">
 
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
+        <style type="text/css">
+            html, body {
+                height: 100%;
+            }
+            #wrapper {
+                width: 400px;
+                height: 100%;
+                margin: 0 auto;
+                position: relative;
+                border: 1px solid #ccc;
+            }
+
+            #loading {
+                display: none; 
+                width: 100%; 
+                height: 100%; 
+                background: rgba(0,0,0,0.5); 
+                text-align: center; 
+                color: #fff;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 1;
+            }
+
+                #loading small {
+                    width: 100%;
+                    position: absolute;
+                    top: 49%;
+                    left:0;
+                }
+
+            #map-canvas {
+                width: 100%;
+                height: 200px;
+            }
+
+            .placeholder {
+                position: absolute; 
+                top: 48%; left:0; 
+                width: 100%; 
+                text-align: center; 
+                color: #777;
+            }
+
+            select {
+                width: 100%;
+                padding: 10px;
+                -webkit-appearance: none;
+                border: 1px solid #ccc;
+            }
+        </style>
 
     </head>
     <body>
+    <div id="wrapper">
+        <select class="select-city" name="select-city">
+            <option value="select">Select a city</option>
+            <option value="capetown">Cape Town</option>
+            <option value="durban">Durban</option>
+            <option value="johannesburg">Johannesburg</option>
+        </select>
+        <div id="results" style="display: none;">
+            <img class="icon" src="" />
+            <div class="customIcon"></div>
+            <h1 class="city-name"></h1>
+            <h2 class="description"></h2>
+            <h3 class="current-temp">Current Temp: <span></span>&deg;c</h3>
+            <h4 class="max-temp">Max: <span></span>&deg;c</h4>
+            <h4 class="min-temp">Min: <span></span>&deg;c</h4>
+            <div id="map-canvas"></div>
+        </div>
+        <div id="loading">
+            <small>Loading...</small>
+        </div>
+        <small class="placeholder">Please select a city</small>
+    </div>
     
-    <select>
-        <option>Select a city</option>
-        <option>Cape Town</option>
-        <option>Durban</option>
-        <option>Johannesburg</option>
-    </select>
-
-    <div id="results" style="display: none;">
-        <img class="icon" src="" />
-        <div class="customIcon"></div>
-
-        <h1 class="city-name"></h1>
-        <h2 class="description"></h2>
-        <h3 class="current-temp">Current Temp: <span></span>&deg;c</h3>
-
-        <h4 class="max-temp">Max: <span></span>&deg;c</h4>
-        <h4 class="min-temp">Min: <span></span>&deg;c</h4>
-    </div>
-
-    <div id="loading" style="display: none;">
-        Loading...
-    </div>
-
-    <input type="button" id="getWeather" value="GET WEATHER" style="position: absolute; top: 30px; left: 46%;" />
-
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
-            // Retrieve all users
-            $("#getWeather").click(function(event){
-                event.preventDefault();
-                $('#loading').fadeIn(300);
+            var selectValue = $('.select-city').val();
+            console.log(selectValue);
 
+            // On load check the value of the select box, then load content if a city is selected
+            if(selectValue === 'select') {
+                console.log('doing nothing...');
+            } else {
+                $('#loading').fadeIn(300);
+                getWeather(selectValue);
+            };
+
+            // Retrieve weather on change of select box
+            $(".select-city").change(function(event){
+                event.preventDefault();
+
+                var selectValue = $('.select-city').val();
+                console.log(selectValue);
+
+                if(selectValue === 'select') {
+                    console.log('doing nothing...');
+                } else {
+                    $('#loading').fadeIn(300);
+                    getWeather(selectValue);
+                };
+            });
+
+            // Get Weather for specified city 
+            function getWeather(selectValue) {
                 $.ajax({
                     type: 'GET',
-                    url: "http://api.openweathermap.org/data/2.5/weather?q=capetown&units=metric&APPID=39b91d00d78830a4f80037ce7f530814",
+                    url: 'http://api.openweathermap.org/data/2.5/weather?q=' + selectValue + '&units=metric&APPID=39b91d00d78830a4f80037ce7f530814',
                     dataType: "jsonp",
                     success: function(data) { 
                         console.log("Success");
@@ -63,6 +136,8 @@
                         var currentTemp = Math.round(data.main.temp);
                         var maxTemp = Math.round(data.main.temp_max);
                         var minTemp = Math.round(data.main.temp_min);
+                        var latitude = data.coord.lat;
+                        var longitude = data.coord.lon;
 
                         $('.icon').attr('src', 'http://openweathermap.org/img/w/' + iconName + '.png');
                         $('.city-name').html(cityName);
@@ -71,18 +146,29 @@
                         $('.max-temp span').html(maxTemp);
                         $('.min-temp span').html(minTemp);
 
-                        $('#loading').fadeOut(200);
+                        $('.icon').load(function(){
+                            $('#loading, .placeholder').fadeOut(200);
+                            setTimeout(function(){
+                                $('#results').fadeIn('1000');
+                                document.getElementById('map-canvas').style.display="block";
+                                initialize(latitude, longitude);
 
-                        setTimeout(function(){
-                            $('#results').fadeIn('1000');
-                        },210);
+                                var map;
+                                function initialize(latitude, longitude) {
+                                    map = new google.maps.Map(document.getElementById('map-canvas'), {
+                                        zoom: 10,
+                                        center: {lat: latitude, lng: longitude}
+                                    });
+                                }
+                            },210);
+                        });
                     },
                     error: function(){ 
                         alert('Failed!');
                     }
                 });
-            });
-         });
+            };
+        });
 
         /*
         if(iconName === '01n') {
