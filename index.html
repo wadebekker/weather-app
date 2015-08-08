@@ -1,0 +1,99 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Weather App</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/normalize.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+
+    </head>
+    <body>
+    
+    <select>
+        <option>Select a city</option>
+        <option>Cape Town</option>
+        <option>Durban</option>
+        <option>Johannesburg</option>
+    </select>
+
+    <div id="results" style="display: none;">
+        <img class="icon" src="" />
+        <div class="customIcon"></div>
+
+        <h1 class="city-name"></h1>
+        <h2 class="description"></h2>
+        <h3 class="current-temp">Current Temp: <span></span>&deg;c</h3>
+
+        <h4 class="max-temp">Max: <span></span>&deg;c</h4>
+        <h4 class="min-temp">Min: <span></span>&deg;c</h4>
+    </div>
+
+    <div id="loading" style="display: none;">
+        Loading...
+    </div>
+
+    <input type="button" id="getWeather" value="GET WEATHER" style="position: absolute; top: 30px; left: 46%;" />
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function() {
+            // Retrieve all users
+            $("#getWeather").click(function(event){
+                event.preventDefault();
+                $('#loading').fadeIn(300);
+
+                $.ajax({
+                    type: 'GET',
+                    url: "http://api.openweathermap.org/data/2.5/weather?q=capetown&units=metric&APPID=39b91d00d78830a4f80037ce7f530814",
+                    dataType: "jsonp",
+                    success: function(data) { 
+                        console.log("Success");
+                        console.log(data);
+
+                        var iconName = data.weather[0].icon;
+                        var cityName = data.name;
+                        var description = data.weather[0].description;
+                        var currentTemp = Math.round(data.main.temp);
+                        var maxTemp = Math.round(data.main.temp_max);
+                        var minTemp = Math.round(data.main.temp_min);
+
+                        $('.icon').attr('src', 'http://openweathermap.org/img/w/' + iconName + '.png');
+                        $('.city-name').html(cityName);
+                        $('.description').html(description);
+                        $('.current-temp span').html(currentTemp);
+                        $('.max-temp span').html(maxTemp);
+                        $('.min-temp span').html(minTemp);
+
+                        $('#loading').fadeOut(200);
+
+                        setTimeout(function(){
+                            $('#results').fadeIn('1000');
+                        },210);
+                    },
+                    error: function(){ 
+                        alert('Failed!');
+                    }
+                });
+            });
+         });
+
+        /*
+        if(iconName === '01n') {
+            $('.customIcon').css({
+                'width':'40px', 
+                'height':'40px', 
+                'display':'none', 
+                'background-color':'red'
+            });
+        };
+        */
+      </script>
+    </body>
+</html>
