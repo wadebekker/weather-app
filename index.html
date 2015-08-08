@@ -18,11 +18,13 @@
                 height: 100%;
             }
             #wrapper {
-                width: 400px;
-                height: 100%;
+                max-width: 600px;
+                padding: 30px;
+                min-height: 100%;
                 margin: 0 auto;
                 position: relative;
                 border: 1px solid #ccc;
+                box-sizing: border-box;
             }
 
             #loading {
@@ -112,7 +114,6 @@
                 event.preventDefault();
 
                 var selectValue = $('.select-city').val();
-                console.log(selectValue);
 
                 if(selectValue === 'select') {
                     console.log('doing nothing...');
@@ -177,10 +178,8 @@
                                 }
                             },210);
                         });
-
        
                         function windDirection() {
-                            console.log(data.wind.deg);
                             if(data.wind.deg > 349 && data.wind.deg < 11) {
                                 data.wind.deg = 'N';
                             } else if(data.wind.deg > 11 && data.wind.deg < 34) {
