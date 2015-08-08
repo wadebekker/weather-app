@@ -29,7 +29,7 @@
                 display: none; 
                 width: 100%; 
                 height: 100%; 
-                background: rgba(0,0,0,0.5); 
+                background: rgba(0,0,0,0.75); 
                 text-align: center; 
                 color: #fff;
                 position: absolute;
@@ -52,7 +52,7 @@
 
             .placeholder {
                 position: absolute; 
-                top: 48%; left:0; 
+                top: 49%; left:0; 
                 width: 100%; 
                 text-align: center; 
                 color: #777;
@@ -83,6 +83,8 @@
             <h3 class="current-temp">Current Temp: <span></span>&deg;c</h3>
             <h4 class="max-temp">Max: <span></span>&deg;c</h4>
             <h4 class="min-temp">Min: <span></span>&deg;c</h4>
+            <h4 class="wind-speed">Wind Speed: <span></span>km/h</h4>
+            <h4 class="wind-direction">Wind Direction: <span></span></h4>
             <div id="map-canvas"></div>
         </div>
         <div id="loading">
@@ -138,6 +140,8 @@
                         var minTemp = Math.round(data.main.temp_min);
                         var latitude = data.coord.lat;
                         var longitude = data.coord.lon;
+                        var windSpeed = Math.round(((data.wind.speed)*3600)/1000);
+                        var windAngle = windDirection();
 
                         $('.icon').attr('src', 'http://openweathermap.org/img/w/' + iconName + '.png');
                         $('.city-name').html(cityName);
@@ -145,6 +149,8 @@
                         $('.current-temp span').html(currentTemp);
                         $('.max-temp span').html(maxTemp);
                         $('.min-temp span').html(minTemp);
+                        $('.wind-speed span').html(windSpeed);
+                        $('.wind-direction span').html(windAngle);
 
                         $('.icon').load(function(){
                             $('#loading, .placeholder').fadeOut(200);
@@ -153,15 +159,63 @@
                                 document.getElementById('map-canvas').style.display="block";
                                 initialize(latitude, longitude);
 
-                                var map;
                                 function initialize(latitude, longitude) {
-                                    map = new google.maps.Map(document.getElementById('map-canvas'), {
+                                    var myLatlng = new google.maps.LatLng(latitude,longitude);
+                                    var mapOptions = {
                                         zoom: 10,
-                                        center: {lat: latitude, lng: longitude}
+                                        center: myLatlng
+                                    }
+                                    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+                                    var marker = new google.maps.Marker({
+                                        position: myLatlng,
+                                        map: map,
+                                        animation: google.maps.Animation.DROP,
+                                        title: 'Hello World!'
                                     });
+
                                 }
                             },210);
                         });
+
+       
+                        function windDirection() {
+                            console.log(data.wind.deg);
+                            if(data.wind.deg > 349 && data.wind.deg < 11) {
+                                data.wind.deg = 'N';
+                            } else if(data.wind.deg > 11 && data.wind.deg < 34) {
+                                data.wind.deg = 'NNE';
+                            } else if(data.wind.deg > 34 && data.wind.deg < 56) {
+                                data.wind.deg = 'NE';
+                            } else if(data.wind.deg > 56 && data.wind.deg < 79) {
+                                data.wind.deg = 'ENE';
+                            } else if(data.wind.deg > 79 && data.wind.deg < 101) {
+                                data.wind.deg = 'E';
+                            } else if(data.wind.deg > 101 && data.wind.deg < 124) {
+                                data.wind.deg = 'ESE';
+                            } else if(data.wind.deg > 124 && data.wind.deg < 146) {
+                                data.wind.deg = 'SE';
+                            } else if(data.wind.deg > 146 && data.wind.deg < 169) {
+                                data.wind.deg = 'SSE';
+                            } else if(data.wind.deg > 169 && data.wind.deg < 191) {
+                                data.wind.deg = 'S';
+                            } else if(data.wind.deg > 191 && data.wind.deg < 214) {
+                                data.wind.deg = 'SSW';
+                            } else if(data.wind.deg > 214 && data.wind.deg < 236) {
+                                data.wind.deg = 'SW';
+                            } else if(data.wind.deg > 336 && data.wind.deg < 259) {
+                                data.wind.deg = 'WSW';
+                            } else if(data.wind.deg > 259 && data.wind.deg < 281) {
+                                data.wind.deg = 'W';
+                            } else if(data.wind.deg > 281 && data.wind.deg < 304) {
+                                data.wind.deg = 'WNW';
+                            } else if(data.wind.deg > 304 && data.wind.deg < 326) {
+                                data.wind.deg = 'NW';
+                            } else if(data.wind.deg > 326 && data.wind.deg < 349) {
+                                data.wind.deg = 'NNW';
+                            }
+                            return data.wind.deg;
+                        };
                     },
                     error: function(){ 
                         alert('Failed!');
@@ -170,6 +224,7 @@
             };
         });
 
+        
         /*
         if(iconName === '01n') {
             $('.customIcon').css({
