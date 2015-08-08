@@ -144,6 +144,8 @@
                         var windSpeed = Math.round(((data.wind.speed)*3600)/1000);
                         var windAngle = windDirection();
 
+                        console.log(data.wind.deg);
+
                         $('.icon').attr('src', 'http://openweathermap.org/img/w/' + iconName + '.png');
                         $('.city-name').html(cityName);
                         $('.description').html(description);
@@ -180,7 +182,10 @@
                         });
        
                         function windDirection() {
-                            if(data.wind.deg > 349 && data.wind.deg < 11) {
+                            console.log(data.wind.deg);
+                            if(data.wind.deg == undefined) {
+                                data.wind.deg = 'Unavailable';
+                            } else if(data.wind.deg > 349 && data.wind.deg < 11) {
                                 data.wind.deg = 'N';
                             } else if(data.wind.deg > 11 && data.wind.deg < 34) {
                                 data.wind.deg = 'NNE';
