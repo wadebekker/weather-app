@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // Get devices time and add a class of night or day depending on time
+    // Get devices time and add a class of night or day to body depending on time
     var dt = new Date();
     var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
@@ -9,7 +9,7 @@ $(document).ready(function() {
         $('body').addClass('night');
     }
 
-    // We know co-ordinates for cities already so we parse them as variables to match against
+    // We know co-ordinates for cities already so we parse them as variables to match against users current position
     var capetownLat = '-33.93';
     var capetownLong = '18.42';
 
@@ -21,12 +21,14 @@ $(document).ready(function() {
 
     var selectValue = $('.select-city').val();
 
+    // check to see if browser offers geolocation, if so ask user to allow location detection
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     } else { 
-        alert("Geolocation is not supported by this browser.");
+        console.log('Geolocation is not supported by this browser.');
     }
 
+    // get users current position and match it against preloaded cities to serve up nearest city's weather
     function showPosition(position) {
         var currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
         var ctPosition = new google.maps.LatLng(capetownLat, capetownLong);
@@ -65,7 +67,7 @@ $(document).ready(function() {
     }
 
 
-    // On load check the value of the select box, then load content if a city is selected
+    // On load check the value of the select box, then load weather if a city is selected
     if(selectValue === 'select') {
         console.log('doing nothing...');
     } else {
@@ -74,7 +76,7 @@ $(document).ready(function() {
     };
 
     // Retrieve weather on change of select box
-    $(".select-city").change(function(event){
+    $(selectValue).change(function(event){
         event.preventDefault();
 
         var selectValue = $('.select-city').val();
@@ -88,7 +90,7 @@ $(document).ready(function() {
         };
     });
 
-    // Get Weather for specified city 
+    // Get Weather for either the nearest city or the city chosen via the select input
     function getWeather(selectValue) {
         selectValue = $('.select-city').val();
         $.ajax({
@@ -96,8 +98,7 @@ $(document).ready(function() {
             url:'http://api.openweathermap.org/data/2.5/weather?q=' + selectValue + '&units=metric&APPID=39b91d00d78830a4f80037ce7f530814',
             dataType: "jsonp",
             success: function(data) { 
-                console.log("Success");
-                console.log(data);
+                //console.log(data);
 
                 var iconName = data.weather[0].icon;
                 var cityName = data.name;
@@ -129,8 +130,10 @@ $(document).ready(function() {
                     },210);
                 });
 
+                // run the wind turbine animation
                 windSpeedAnimation();
 
+                // create the google map depending on the city selected
                 function initialize(latitude, longitude) {
                     var myLatlng = new google.maps.LatLng(latitude,longitude);
                     var mapOptions = {
@@ -147,6 +150,7 @@ $(document).ready(function() {
                     });
                 }
 
+                // caclulate the wind direction based on degrees brought through in the data
                 function windDirection() {
                     if(data.wind.deg == undefined) {
                         data.wind.deg = 'Unavailable';
@@ -186,13 +190,16 @@ $(document).ready(function() {
                     return data.wind.deg;
                 };
 
+                // Determines how fast the turbine spins depending on wind speed
                 function windSpeedAnimation() {
-                    if (windSpeed <= 20) {
+                    if (windSpeed <= 10) {
                         $('.wind-speed-indicator').addClass('stage-one');
-                    } else if (windSpeed > 20 && windSpeed < 40 ) {
+                    } else if (windSpeed > 10 && windSpeed < 20 ) {
                         $('.wind-speed-indicator').addClass('stage-two');
-                    } else if (windSpeed > 40) {
+                    } else if (windSpeed > 20 && windSpeed < 30 ) {
                         $('.wind-speed-indicator').addClass('stage-three');
+                    } else if (windSpeed > 30) {
+                        $('.wind-speed-indicator').addClass('stage-four');
                     }
                 };
             },
@@ -202,10 +209,10 @@ $(document).ready(function() {
         });
 
         // Once city has been selected, keep checking every 60 seconds
-        /*
         setTimeout(function(){
+            $('#results').fadeTo( 300, 0.1 );
+            $('#loading').fadeIn(300);
             getWeather(selectValue);
         }, 60000);
-        */
     };
 });

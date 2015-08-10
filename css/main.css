@@ -123,16 +123,20 @@ select {
 }
 
 .wind-speed-indicator.stage-one::before {
+    animation: rotate-wind-turbine 13s linear infinite;
+    -webkit-animation: rotate-wind-turbine 13s linear infinite;
+}
+.wind-speed-indicator.stage-two::before {
+    animation: rotate-wind-turbine 10s linear infinite;
+    -webkit-animation: rotate-wind-turbine 10s linear infinite;
+}
+.wind-speed-indicator.stage-three::before {
     animation: rotate-wind-turbine 7s linear infinite;
     -webkit-animation: rotate-wind-turbine 7s linear infinite;
 }
-.wind-speed-indicator.stage-two::before {
+.wind-speed-indicator.stage-four::before {
     animation: rotate-wind-turbine 4s linear infinite;
     -webkit-animation: rotate-wind-turbine 4s linear infinite;
-}
-.wind-speed-indicator.stage-three::before {
-    animation: rotate-wind-turbine 2s linear infinite;
-    -webkit-animation: rotate-wind-turbine 2s linear infinite;
 }
 
 @keyframes rotate-wind-turbine {
