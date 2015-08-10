@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="css/main.css">
 
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=geometry"></script>
 
         <style type="text/css">
             html, body {
@@ -63,7 +63,6 @@
             select {
                 width: 100%;
                 padding: 10px;
-                -webkit-appearance: none;
                 border: 1px solid #ccc;
             }
         </style>
@@ -98,6 +97,58 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
+            // We know co-ordinates for cities already so we parse them as variables
+            var capetownLat = '-33.93';
+            var capetownLong = '18.42';
+
+            var jhbLat = '-26.2';
+            var jhbLong = '28.04';
+
+            var dbnLat = '-29.86';
+            var dbnLong = '31.03';
+
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else { 
+                x.html("Geolocation is not supported by this browser.");
+            }
+
+            function showPosition(position) {
+                var currentPosition = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+                var ctPosition = new google.maps.LatLng(capetownLat, capetownLong);
+                var jhbPosition = new google.maps.LatLng(jhbLat, jhbLong);
+                var dbnPosition = new google.maps.LatLng(dbnLat, dbnLong);
+
+
+                var betweenHereAndCt = parseFloat(calcDistance(currentPosition, ctPosition));
+                var betweenHereAndJhb = parseFloat(calcDistance(currentPosition,jhbPosition));
+                var betweenHereAndDbn = parseFloat(calcDistance(currentPosition, dbnPosition));
+
+                console.log('Distance between you and CT: ' + betweenHereAndCt + 'km');
+                console.log('Distance between you and JHB: ' + betweenHereAndJhb + 'km');
+                console.log('Distance between you and DBN: ' + betweenHereAndDbn + 'km');
+
+                //calculates distance between two points in km's
+                function calcDistance(currentPosition, ctPosition){
+                  return (google.maps.geometry.spherical.computeDistanceBetween(currentPosition, ctPosition) / 1000).toFixed(2);
+                }
+
+                if(betweenHereAndCt < betweenHereAndJhb && betweenHereAndCt < betweenHereAndDbn) {
+                    alert('Cape Town is closest');
+                    var selectValue = 'capetown';
+                    getWeather(selectValue);
+                } else if (betweenHereAndJhb < betweenHereAndDbn && betweenHereAndJhb < betweenHereAndCt) {
+                    alert('Johannesburg is closest');
+                    var selectValue = 'johannesburg';
+                    getWeather(selectValue);
+                } else if (betweenHereAndDbn < betweenHereAndJhb && betweenHereAndDbn < betweenHereAndCt) {
+                    alert('Durban is closest');
+                    var selectValue = 'durban';
+                    getWeather(selectValue);
+                }
+            }
+
             var selectValue = $('.select-city').val();
             console.log(selectValue);
 
@@ -144,7 +195,6 @@
                         var windSpeed = Math.round(((data.wind.speed)*3600)/1000);
                         var windAngle = windDirection();
 
-                        console.log(data.wind.deg);
 
                         $('.icon').attr('src', 'http://openweathermap.org/img/w/' + iconName + '.png');
                         $('.city-name').html(cityName);
@@ -158,28 +208,27 @@
                         $('.icon').load(function(){
                             $('#loading, .placeholder').fadeOut(200);
                             setTimeout(function(){
-                                $('#results').fadeIn('1000');
+                                $('#results').fadeIn(1000);
                                 document.getElementById('map-canvas').style.display="block";
                                 initialize(latitude, longitude);
-
-                                function initialize(latitude, longitude) {
-                                    var myLatlng = new google.maps.LatLng(latitude,longitude);
-                                    var mapOptions = {
-                                        zoom: 10,
-                                        center: myLatlng
-                                    }
-                                    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-                                    var marker = new google.maps.Marker({
-                                        position: myLatlng,
-                                        map: map,
-                                        animation: google.maps.Animation.DROP,
-                                        title: 'Hello World!'
-                                    });
-
-                                }
                             },210);
                         });
+
+                        function initialize(latitude, longitude) {
+                            var myLatlng = new google.maps.LatLng(latitude,longitude);
+                            var mapOptions = {
+                                zoom: 10,
+                                center: myLatlng
+                            }
+                            var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+                            var marker = new google.maps.Marker({
+                                position: myLatlng,
+                                map: map,
+                                animation: google.maps.Animation.DROP,
+                                title: 'Hello World!'
+                            });
+                        }
        
                         function windDirection() {
                             console.log(data.wind.deg);
