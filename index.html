@@ -87,12 +87,15 @@
 
             .wind-speed-indicator.stage-one::before {
                 animation: rotate-wind-turbine 7s linear infinite;
+                -webkit-animation: rotate-wind-turbine 7s linear infinite;
             }
             .wind-speed-indicator.stage-two::before {
                 animation: rotate-wind-turbine 4s linear infinite;
+                -webkit-animation: rotate-wind-turbine 4s linear infinite;
             }
             .wind-speed-indicator.stage-three::before {
                 animation: rotate-wind-turbine 2s linear infinite;
+                -webkit-animation: rotate-wind-turbine 2s linear infinite;
             }
 
             @keyframes rotate-wind-turbine {
@@ -101,6 +104,14 @@
                 }
                 100% {
                     transform: rotate(360deg);
+                }
+            }
+            @-webkit-keyframes rotate-wind-turbine {
+                0% {
+                    -webkit-transform: rotate(0deg);
+                }
+                100% {
+                    -webkit-transform: rotate(360deg);
                 }
             }
         </style>
