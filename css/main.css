@@ -16,14 +16,6 @@ html {
     text-shadow: none;
 }
 
-hr {
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 1em 0;
-    padding: 0;
-}
 
 audio,
 canvas,
@@ -34,30 +26,131 @@ video {
     vertical-align: middle;
 }
 
-fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-}
-
-textarea {
-    resize: vertical;
-}
-
-.browserupgrade {
-    margin: 0.2em 0;
-    background: #ccc;
-    color: #000;
-    padding: 0.2em 0;
-}
 
 
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
 
+html, body {
+    height: 100%;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+}
 
+h1, h2, h3, h4 {
+    font-weight: 300; 
+}
 
+.day #wrapper {
+    background: #75c1ea;
+}
+.night #wrapper {
+    background: #000033;                
+}
+
+#wrapper {
+    max-width: 600px;
+    padding: 30px;
+    min-height: 100%;
+    margin: 0 auto;
+    position: relative;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+#results {
+    display: none;
+}
+
+#loading {
+    display: none; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.75); 
+    text-align: center; 
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+    #loading small {
+        width: 100%;
+        position: absolute;
+        top: 49%;
+        left:0;
+    }
+
+#map-canvas {
+    width: 100%;
+    height: 200px;
+}
+
+.placeholder {
+    position: absolute; 
+    top: 49%; left:0; 
+    width: 100%; 
+    text-align: center; 
+    color: #777;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    color: #222;
+}
+
+.wind-speed-indicator {
+    width: 140px;
+    height: 215px;
+    margin: 0 0 20px 0;
+    position: relative;
+    background: url(../img/turbine-base.svg) no-repeat bottom center;
+}
+
+.wind-speed-indicator::before {
+    content: '';
+    width: 140px;
+    height: 140px;
+    background: url(../img/turbine-prop.svg) no-repeat bottom center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.wind-speed-indicator.stage-one::before {
+    animation: rotate-wind-turbine 7s linear infinite;
+    -webkit-animation: rotate-wind-turbine 7s linear infinite;
+}
+.wind-speed-indicator.stage-two::before {
+    animation: rotate-wind-turbine 4s linear infinite;
+    -webkit-animation: rotate-wind-turbine 4s linear infinite;
+}
+.wind-speed-indicator.stage-three::before {
+    animation: rotate-wind-turbine 2s linear infinite;
+    -webkit-animation: rotate-wind-turbine 2s linear infinite;
+}
+
+@keyframes rotate-wind-turbine {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes rotate-wind-turbine {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
 
 
 
@@ -76,123 +169,4 @@ textarea {
 
 @media only screen and (min-width: 35em) {
 
-}
-
-@media print,
-       (-o-min-device-pixel-ratio: 5/4),
-       (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 120dpi) {
-
-}
-
-/* ==========================================================================
-   Helper classes
-   ========================================================================== */
-
-.hidden {
-    display: none !important;
-    visibility: hidden;
-}
-
-.visuallyhidden {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-}
-
-.visuallyhidden.focusable:active,
-.visuallyhidden.focusable:focus {
-    clip: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    position: static;
-    width: auto;
-}
-
-.invisible {
-    visibility: hidden;
-}
-
-.clearfix:before,
-.clearfix:after {
-    content: " ";
-    display: table;
-}
-
-.clearfix:after {
-    clear: both;
-}
-
-.clearfix {
-    *zoom: 1;
-}
-
-/* ==========================================================================
-   Print styles
-   ========================================================================== */
-
-@media print {
-    *,
-    *:before,
-    *:after {
-        background: transparent !important;
-        color: #000 !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-    }
-
-    a,
-    a:visited {
-        text-decoration: underline;
-    }
-
-    a[href]:after {
-        content: " (" attr(href) ")";
-    }
-
-    abbr[title]:after {
-        content: " (" attr(title) ")";
-    }
-
-    a[href^="#"]:after,
-    a[href^="javascript:"]:after {
-        content: "";
-    }
-
-    pre,
-    blockquote {
-        border: 1px solid #999;
-        page-break-inside: avoid;
-    }
-
-    thead {
-        display: table-header-group;
-    }
-
-    tr,
-    img {
-        page-break-inside: avoid;
-    }
-
-    img {
-        max-width: 100% !important;
-    }
-
-    p,
-    h2,
-    h3 {
-        orphans: 3;
-        widows: 3;
-    }
-
-    h2,
-    h3 {
-        page-break-after: avoid;
-    }
 }
