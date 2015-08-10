@@ -84,7 +84,7 @@ $(document).ready(function() {
         if(selectValue === 'select') {
             console.log('doing nothing...');
         } else {
-            $('#results').fadeTo( 300, 0.1 );
+            $('#results').fadeOut(300);
             $('#loading').fadeIn(300);
             getWeather(selectValue);
         };
@@ -124,7 +124,7 @@ $(document).ready(function() {
                 $('.icon').load(function(){
                     $('#loading, .placeholder').fadeOut(200);
                     setTimeout(function(){
-                        $('#results').fadeTo( 300, 1 );
+                        $('#results').fadeIn(200);
                         document.getElementById('map-canvas').style.display="block";
                         initialize(latitude, longitude);
                     },210);
