@@ -107,11 +107,12 @@
             var dbnLat = '-29.86';
             var dbnLong = '31.03';
 
+            var selectValue = $('.select-city').val();
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition);
             } else { 
-                x.html("Geolocation is not supported by this browser.");
+                alert("Geolocation is not supported by this browser.");
             }
 
             function showPosition(position) {
@@ -119,7 +120,6 @@
                 var ctPosition = new google.maps.LatLng(capetownLat, capetownLong);
                 var jhbPosition = new google.maps.LatLng(jhbLat, jhbLong);
                 var dbnPosition = new google.maps.LatLng(dbnLat, dbnLong);
-
 
                 var betweenHereAndCt = parseFloat(calcDistance(currentPosition, ctPosition));
                 var betweenHereAndJhb = parseFloat(calcDistance(currentPosition,jhbPosition));
@@ -135,22 +135,20 @@
                 }
 
                 if(betweenHereAndCt < betweenHereAndJhb && betweenHereAndCt < betweenHereAndDbn) {
-                    alert('Cape Town is closest');
-                    var selectValue = 'capetown';
+                    console.log('Cape Town is closest');
+                    var selectValue = $('.select-city').val('capetown');
                     getWeather(selectValue);
                 } else if (betweenHereAndJhb < betweenHereAndDbn && betweenHereAndJhb < betweenHereAndCt) {
-                    alert('Johannesburg is closest');
-                    var selectValue = 'johannesburg';
+                    console.log('Johannesburg is closest');
+                    var selectValue = $('.select-city').val('johannesburg');
                     getWeather(selectValue);
                 } else if (betweenHereAndDbn < betweenHereAndJhb && betweenHereAndDbn < betweenHereAndCt) {
-                    alert('Durban is closest');
-                    var selectValue = 'durban';
+                    console.log('Durban is closest');
+                    var selectValue = $('.select-city').val('durban');
                     getWeather(selectValue);
                 }
             }
 
-            var selectValue = $('.select-city').val();
-            console.log(selectValue);
 
             // On load check the value of the select box, then load content if a city is selected
             if(selectValue === 'select') {
@@ -176,9 +174,10 @@
 
             // Get Weather for specified city 
             function getWeather(selectValue) {
+                selectValue = $('.select-city').val();
                 $.ajax({
-                    type: 'GET',
-                    url: 'http://api.openweathermap.org/data/2.5/weather?q=' + selectValue + '&units=metric&APPID=39b91d00d78830a4f80037ce7f530814',
+                    type:'GET',
+                    url:'http://api.openweathermap.org/data/2.5/weather?q=' + selectValue + '&units=metric&APPID=39b91d00d78830a4f80037ce7f530814',
                     dataType: "jsonp",
                     success: function(data) { 
                         console.log("Success");
