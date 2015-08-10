@@ -16,6 +16,7 @@
         <style type="text/css">
             html, body {
                 height: 100%;
+                background: #75c1ea;
             }
             #wrapper {
                 max-width: 600px;
@@ -65,6 +66,43 @@
                 padding: 10px;
                 border: 1px solid #ccc;
             }
+
+            .wind-speed-indicator {
+                width: 140px;
+                height: 215px;
+                position: relative;
+                background: url(img/turbine-base.svg) no-repeat bottom center;
+            }
+
+            .wind-speed-indicator::before {
+                content: '';
+                width: 140px;
+                height: 140px;
+                background: url(img/turbine-prop.svg) no-repeat bottom center;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 2;
+            }
+
+            .wind-speed-indicator.stage-one::before {
+                animation: rotate-wind-turbine 7s linear infinite;
+            }
+            .wind-speed-indicator.stage-two::before {
+                animation: rotate-wind-turbine 4s linear infinite;
+            }
+            .wind-speed-indicator.stage-three::before {
+                animation: rotate-wind-turbine 2s linear infinite;
+            }
+
+            @keyframes rotate-wind-turbine {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
         </style>
 
     </head>
@@ -86,6 +124,7 @@
             <h4 class="min-temp">Min: <span></span>&deg;c</h4>
             <h4 class="wind-speed">Wind Speed: <span></span>km/h</h4>
             <h4 class="wind-direction">Wind Direction: <span></span></h4>
+            <div class="wind-speed-indicator"></div>
             <div id="map-canvas"></div>
         </div>
         <div id="loading">
@@ -97,6 +136,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
+
             // We know co-ordinates for cities already so we parse them as variables
             var capetownLat = '-33.93';
             var capetownLong = '18.42';
@@ -217,6 +257,8 @@
                             },210);
                         });
 
+                        windSpeedAnimation();
+
                         function initialize(latitude, longitude) {
                             var myLatlng = new google.maps.LatLng(latitude,longitude);
                             var mapOptions = {
@@ -234,7 +276,6 @@
                         }
        
                         function windDirection() {
-                            console.log(data.wind.deg);
                             if(data.wind.deg == undefined) {
                                 data.wind.deg = 'Unavailable';
                             } else if(data.wind.deg > 349 && data.wind.deg < 11) {
@@ -272,11 +313,28 @@
                             }
                             return data.wind.deg;
                         };
+
+                        function windSpeedAnimation() {
+                            if (windSpeed <= 20) {
+                                $('.wind-speed-indicator').addClass('stage-one');
+                            } else if (windSpeed > 20 && windSpeed < 40 ) {
+                                $('.wind-speed-indicator').addClass('stage-two');
+                            } else if (windSpeed > 40) {
+                                $('.wind-speed-indicator').addClass('stage-three');
+                            }
+                        };
                     },
                     error: function(){ 
                         alert('Failed!');
                     }
                 });
+
+                // Once city has been selected, keep checking every 60 seconds
+                /*
+                setTimeout(function(){
+                    getWeather(selectValue);
+                }, 60000);
+                */
             };
         });
 
