@@ -170,6 +170,7 @@
                 if(selectValue === 'select') {
                     console.log('doing nothing...');
                 } else {
+                    $('#results').fadeOut(300);
                     $('#loading').fadeIn(300);
                     getWeather(selectValue);
                 };
