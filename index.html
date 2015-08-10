@@ -7,6 +7,8 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+
         <link rel="stylesheet" href="css/normalize.min.css">
         <link rel="stylesheet" href="css/main.css">
 
@@ -16,16 +18,29 @@
         <style type="text/css">
             html, body {
                 height: 100%;
+                font-family: 'Lato', sans-serif;
+                font-weight: 300;
+            }
+
+            h1, h2, h3, h4 {
+                font-weight: 300; 
+            }
+
+            .day #wrapper {
                 background: #75c1ea;
             }
+            .night #wrapper {
+                background: #000033;                
+            }
+
             #wrapper {
                 max-width: 600px;
                 padding: 30px;
                 min-height: 100%;
                 margin: 0 auto;
                 position: relative;
-                border: 1px solid #ccc;
                 box-sizing: border-box;
+                color: #fff;
             }
 
             #loading {
@@ -65,11 +80,13 @@
                 width: 100%;
                 padding: 10px;
                 border: 1px solid #ccc;
+                color: #222;
             }
 
             .wind-speed-indicator {
                 width: 140px;
                 height: 215px;
+                margin: 0 0 20px 0;
                 position: relative;
                 background: url(img/turbine-base.svg) no-repeat bottom center;
             }
@@ -119,6 +136,9 @@
     </head>
     <body>
     <div id="wrapper">
+        <div id="loading">
+            <small>Loading...</small>
+        </div>
         <select class="select-city" name="select-city">
             <option value="select">Select a city</option>
             <option value="capetown">Cape Town</option>
@@ -138,17 +158,23 @@
             <div class="wind-speed-indicator"></div>
             <div id="map-canvas"></div>
         </div>
-        <div id="loading">
-            <small>Loading...</small>
-        </div>
         <small class="placeholder">Please select a city</small>
     </div>
     
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" language="javascript">
         $(document).ready(function() {
+            // Get devices time and add a class of night or day depending on time
+            var dt = new Date();
+            var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
-            // We know co-ordinates for cities already so we parse them as variables
+            if (dt.getHours() >= 6 && dt.getHours() < 18) {
+                $('body').addClass('day');
+            } else {
+                $('body').addClass('night');
+            }
+
+            // We know co-ordinates for cities already so we parse them as variables to match against
             var capetownLat = '-33.93';
             var capetownLong = '18.42';
 
@@ -221,7 +247,7 @@
                 if(selectValue === 'select') {
                     console.log('doing nothing...');
                 } else {
-                    $('#results').fadeOut(300);
+                    $('#results').fadeTo( 300, 0.1 );
                     $('#loading').fadeIn(300);
                     getWeather(selectValue);
                 };
@@ -262,7 +288,7 @@
                         $('.icon').load(function(){
                             $('#loading, .placeholder').fadeOut(200);
                             setTimeout(function(){
-                                $('#results').fadeIn(1000);
+                                $('#results').fadeTo( 300, 1 );
                                 document.getElementById('map-canvas').style.display="block";
                                 initialize(latitude, longitude);
                             },210);
