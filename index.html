@@ -136,14 +136,17 @@
 
                 if(betweenHereAndCt < betweenHereAndJhb && betweenHereAndCt < betweenHereAndDbn) {
                     console.log('Cape Town is closest');
+                    $('#loading').fadeIn(300);
                     var selectValue = $('.select-city').val('capetown');
                     getWeather(selectValue);
                 } else if (betweenHereAndJhb < betweenHereAndDbn && betweenHereAndJhb < betweenHereAndCt) {
                     console.log('Johannesburg is closest');
+                    $('#loading').fadeIn(300);
                     var selectValue = $('.select-city').val('johannesburg');
                     getWeather(selectValue);
                 } else if (betweenHereAndDbn < betweenHereAndJhb && betweenHereAndDbn < betweenHereAndCt) {
                     console.log('Durban is closest');
+                    $('#loading').fadeIn(300);
                     var selectValue = $('.select-city').val('durban');
                     getWeather(selectValue);
                 }
